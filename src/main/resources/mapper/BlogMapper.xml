@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.springboot1.mapper.BlogMapper" >
+
+  <sql id="AllList" >
+    B_ID bId, B_CONTENT bContent, B_PHOTO bPhoto, B_DATE bDate, B_U_ID buId, B_COMMENT_AMOUNT bcAmount, B_LIKE_AMOUNT blAmount
+  </sql>
+  <insert id="addBlog" parameterType="Blog">
+    insert into blog (B_CONTENT,B_PHOTO,B_DATE,B_U_ID) values (#{bContent},#{bPhoto},#{bDate},#{buId})
+  </insert>
+  <select id="selectBcontent" parameterType="map" resultType="Blog">
+    select <include refid="AllList" /> from blog
+    where B_CONTENT like '%#{bContent}%'
+    limit #{pageNo},#{pageSize}
+  </select>
+
+  <select id="selectBlog" parameterType="int" resultType="Blog">
+    select <include refid="AllList" /> from blog
+    where B_ID = #{bId}
+  </select>
+  <!--分页查询总条数-->
+  <select id="countBlogs" resultType="int">
+    select count(B_ID) from blog
+  </select>
+  <!--分页查询用户的方法-->
+  <select id="findBlogsByLimit" parameterType="map" resultType="Blog">
+    select <include refid="AllList" /> from blog
+    limit #{pageNo},#{pageSize}
+  </select>
+</mapper>

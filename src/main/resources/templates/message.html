@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+    <div>
+        <span>用户名：</span><span th:text="${blog.buName}"></span>  <span>发博时间：</span><span th:text="${time}"></span><br>
+        <span th:text="${blog.bDate}"></span>
+        <img th:src="@{/static/images/{a}(a=${blog.bPhoto})}" width="600px" height="400px"><br>
+        内容：<span th:text="${blog.bContent}"></span><br>
+        评论数：<span th:text="${blog.bcAmount}"></span>              点赞数：<span th:text="${blog.blAmount}"></span><br>
+        <a th:href="@{${'/comment/add1'}(cbId=${blog.bId})}">评论</a>
+    </div>
+    <div>
+        <h2>评论</h2>
+        <div th:each="c:${comments}">
+            内容：<span th:text="${c.cContent}"></span><br>
+            <img th:src="@{/static/images/{e}(e=${c.cPhoto})}" width="60px" height="40px"><br>
+            <span>评论时间：</span><span th:text="${c.cDate}"></span>
+        </div>
+    </div>
+
+</body>
+</html>

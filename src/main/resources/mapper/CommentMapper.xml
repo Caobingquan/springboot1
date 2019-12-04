@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.springboot1.mapper.CommentMapper" >
+
+  <sql id="AllList" >
+    C_ID cId, C_CONTENT cContent, C_PHOTO cPhoto, C_DATE cDate, C_U_ID cuId, C_B_ID cbId
+  </sql>
+  <insert id="addComment" parameterType="Comment">
+    insert into comment (C_CONTENT,C_PHOTO,C_DATE,C_U_ID,C_B_ID) values (#{cContent},#{cPhoto},#{cDate},#{cuId},#{cbId})
+  </insert>
+  <select id="selectBycbId" parameterType="int" resultType="Comment">
+    select <include refid="AllList" /> from comment
+    where C_B_ID=#{cbId}
+  </select>
+</mapper>

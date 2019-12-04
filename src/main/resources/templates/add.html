@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+
+</head>
+<body>
+    <form th:action="@{/blog/add2}" method="post" enctype="multipart/form-data">
+        <input th:value="${session.Phone}" type="text" id="phone" name="phone" placeholder="电话" /><br>
+        <input type="text" id="bContent" name="bContent" placeholder="内容" required=" " /><br>
+        图片:<input type="file"  name="upload"/><br>
+
+        <input type="submit" value="发布" />
+    </form>
+</body>
+</html>

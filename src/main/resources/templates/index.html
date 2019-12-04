@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>登录注册表单切换</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+<script type="text/javascript" th:src="@{/static/js/jquery-1.11.1.min.js}"></script>
+
+<link th:href="@{/static/css/style.css}" rel="stylesheet" type="text/css" media="all" />
+
+</head>
+<body>
+
+<div class="main">
+	<h1>登录注册表单切换</h1>
+	<div class="w3_login">
+		<div class="w3_login_module">
+			<div class="module form-module">
+				<div class="toggle">
+					<i class="fa fa-times fa-pencil"></i>
+					<div class="tooltip">点击切换</div>
+				</div>
+				<div class="form">
+					<h2>登录账号<span style="background-color: #c9302c" th:text="${msg}"></span></h2>
+					<form th:action="@{/user/login}" method="post">
+						<input type="text" name="uPhone" placeholder="手机号" required=" " />
+						<input type="password" name="uPassword" placeholder="密码" required=" " />
+						<input type="submit" value="登录" />
+					</form>
+				</div>
+				<div class="form">
+					<h2>创建一个账号</h2>
+					<form th:action="@{/user/register}" method="post">
+						<input type="text" id="uPhone" name="uPhone" placeholder="电话" required=" " />
+						<input type="text" id="checkcode1" name="checkcode1">
+						<!--<button type="button" id="recode1" onclick="revcode1()">获取验证码</button>-->
+						<input type="button" id="recode1" value="获取验证码" />
+						<input type="text" id="checkcode" name="checkcode" style="display:none"/>
+						<img hidden th:src="@{/user/createImage}" id="code"/> <button hidden="hidden" type="button" id="recode" onclick="revcode()">刷新</button><br>
+						<input type="text" id="uName" name="uName" placeholder="请输入昵称" required=" " />
+						<input type="password" id="uPassword" name="uPassword" placeholder="请输入3-10位密码" required=" " />
+						<input type="password" id="ReuPwd" name="ReuPwd" placeholder="请再次输入密码" required=" " />
+						<input type="submit" id="button" value="注册" />
+					</form>
+				</div>
+				<div class="cta"><a href="#">忘记密码?</a></div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+$('.toggle').click(function(){
+	$(this).children('i').toggleClass('fa-pencil');
+	$('.form').animate({height: "toggle",'padding-top': 'toggle','padding-bottom': 'toggle',opacity: "toggle"}, "slow");
+});
+</script>
+
+<!--验证码-->
+<script>
+    $("#recode1").click(function(){
+        var btn = $(this);
+        var count = 60;
+        var resend = setInterval(function(){
+            count--;
+            if (count > 0){
+                btn.val(count+"秒后可重新获取");
+                $.cookie("captcha", count, {path: '/', expires: (1/86400)*count});
+            }else {
+                clearInterval(resend);
+                btn.val("获取验证码").removeAttr('disabled style');
+            }
+        }, 1000);
+        btn.attr('disabled',true).css('cursor','not-allowed');
+        $.ajax({
+            type: 'post',
+            url: 'createcode1',
+            success:function(){
+                //请求成功时处理
+                alert("发送成功")
+            }
+        });
+    });
+    function revcode() {
+        document.getElementById("code").src = "http://localhost:8080/springboot1/user/createImage?qwer=" + new Date().getTime();
+    }
+</script>
+<!--前端判断-->
+<script>
+    $("#uName").hover(
+        function(){
+
+        },
+        function(){
+            var uName=document.getElementById("uName").value;
+            if (uName.length<2){
+                alert("昵称至少2位")
+			}
+
+        }
+    );
+    $("#uPassword").hover(
+        function(){
+
+        },
+        function(){
+            var uPassword=document.getElementById("uPassword").value;
+            var upwdMode= /^[0-9A-z\u4e00-\u9fa5]{3,10}$/;
+            if (upwdMode.test(uPassword)) {
+                alert("用户密码合法");
+            }else {
+                alert("用户密码不合法！");
+            }
+        }
+    );
+    $("#ReuPwd").hover(
+        function(){
+
+        },
+        function(){
+            var uPassword=document.getElementById("uPassword").value;
+            var ReuPwd=document.getElementById("ReuPwd").value;
+            if (uPassword==ReuPwd) {
+                alert("密码一致！");
+                document.getElementById("button").disabled = false;
+            }else {
+                alert("密码不一致！");
+                document.getElementById("button").disabled = true;
+            }
+        }
+    );
+</script>
+<!--后台处理-->
+<script>
+    $("#checkcode1").blur(function() {
+        var checkcode1=document.getElementById("checkcode1").value;
+        $.ajax({
+            type: 'post',
+            url: 'http://localhost:8080/springboot1/user/checkcode1',
+            data: 'checkcode1='+checkcode1,
+            dataType: "json",
+            success:function(result){
+                if ("m1"==result.msg) {
+                    alert("验证码失效");
+                    document.getElementById("code").removeAttribute("hidden")
+                    document.getElementById("recode").removeAttribute("hidden")
+                    document.getElementById("checkcode").style="display:inline"
+				}
+                if ("m2"==result.msg) {
+                    alert("验证码为空");
+                    document.getElementById("code").removeAttribute("hidden")
+                    document.getElementById("recode").removeAttribute("hidden")
+                    document.getElementById("checkcode").style="display:inline"
+                }
+                if ("m3"==result.msg) {
+                    alert("验证码正确");
+                }
+                if ("m4"==result.msg) {
+                    alert("验证码错误");
+                    document.getElementById("code").removeAttribute("hidden")
+                    document.getElementById("recode").removeAttribute("hidden")
+                    document.getElementById("checkcode").style="display:inline"
+                }
+
+            },
+            error:function () {
+
+            }
+        });
+    });
+    $("#checkcode").blur(function() {
+        var checkcode=document.getElementById("checkcode").value;
+        $.ajax({
+            type: 'post',
+            url: 'http://localhost:8080/springboot1/user/checkcode',
+            data: 'checkcode='+checkcode,
+            dataType: "json",
+            success:function(result){
+                if ("m1"==result.msg || "m2"==result.msg) {
+                    alert("验证码错误");
+                    document.getElementById("recode1").disabled=true;
+                }
+                if ("m3"==result.msg) {
+                    alert("验证码正确");
+                    document.getElementById("recode1").disabled=false;
+                }
+
+            },
+            error:function () {
+
+            }
+        });
+    });
+
+    $("#uPhone").blur(function() {
+        var uPhone=document.getElementById("uPhone").value;
+        var uPhoneMode= /^(13|15|18)\d{9}$/;
+        if (uPhoneMode.test(uPhone)) {
+            //使用ajax动态交互验证管理员名称是否重复
+            $.ajax({
+                type: 'post',
+                url: 'http://localhost:8080/springboot1/user/checkUphone',
+                data: 'uPhone='+uPhone,
+                dataType: "json",
+                success:function(result){
+                    console.log(result);
+                    console.log(result.msg);
+                    if ("ok"==result.msg){
+                        alert("手机号合法！")
+                    }else {
+                        alert("该会员已存在，请直接登录！")
+                    }
+                },
+                error:function () {
+
+                }
+            });
+        }else {
+            alert("手机格式不对");
+        }
+    });
+</script>
+</body>
+</html>

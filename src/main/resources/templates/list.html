@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type="text/javascript" th:src="@{/static/js/jquery-1.8.3.js}"></script>
+    <script type="text/javascript" th:src="@{/static/js/bootstrap.min.js}"></script>
+    <script type="text/javascript" src="../../static/js/bootstrap.js"></script>
+    <script th:src="@{/static/layui/layui.js}" charset="utf-8"></script>
+</head>
+<body>
+    用户：<label th:text="${session.Phone}"></label>
+    <a th:href="@{${'/blog/add1'}(bPhone=${session.Phone})}">发微博</a>
+    <table style="margin-left: auto ;margin-right: auto ">
+        <tr>
+            <th>信息列表</th>
+        </tr>
+        <tr th:each="b:${pageInfo.datas}">
+            <td>
+                发博人：<span th:text="${b.buName}"></span>  时间：<span th:text="${b.bDate}"></span><br>
+                <img th:src="@{/static/images/{a}(a=${b.bPhoto})}" width="300px" height="200px"><br>
+                缩略信息：<a th:href="@{${'/blog/selectbyBid'}(bId=${b.bId})}" th:text="${b.bContent}"></a>
+                <a th:href="@{${'/blog/delete'}(bId=${b.bId})}" onclick="return confirm('确定删除?')">删除</a><br>
+                评论数：<span th:text="${b.bcAmount}"></span>  点赞数：<span th:text="${b.blAmount}"></span>
+            </td>
+        </tr>
+    </table>
+    <nav aria-label="Page navigation">
+        <ul class="pagination">
+            <!--上一页  标签处理 start -->
+            <li th:if="${pageInfo.currentPage eq 1}" class="disabled">
+                <a href="#" aria-label="Previous"><span aria-hidden="true">«</span></a>
+            </li>
+            <li th:if="${not(pageInfo.currentPage eq 1)}">
+                <!--使用 th:href  完成url处理    地址栏跳转  及  参数处理  -->
+                <a th:href="@{${'/blog/blogselect'}(pageNo=${pageInfo.currentPage -1})}" aria-label="Previous"><span aria-hidden="true">«</span></a>
+            </li>
+            <!--上一页  标签处理 end -->
+            <!--页码处理  start-->
+            <li th:each="pageNum:${#numbers.sequence(1,pageInfo.maxPage)}">
+                <!-- pageNo后台发送到前台的当前页码    pageNum页面中的当前页码-->
+                <a th:if="${pageInfo.currentPage eq pageNum}"  class="my_a" th:text="${pageNum}" style="background-color: #337ab7;color: #fff;">
+                    <span th:text="${pageNum}"></span></a>
+                <!--未被选中  页码处理-->
+                <a th:if="${not (pageInfo.currentPage eq pageNum)}" th:href="@{${'/blog/blogselect'}(pageNo=${pageNum})}"><span th:text="${pageNum}"></span></a>
+            </li>
+            <!--页码处理  end-->
+            <li th:if="${pageInfo.currentPage eq pageInfo.maxPage}" class="disabled">
+                <a href="#" aria-label="Previous"><span aria-hidden="true">»</span></a>
+            </li>
+
+            <li th:if="${not(pageInfo.currentPage eq pageInfo.maxPage)}">
+                <!--使用 th:href  完成url处理    地址栏跳转  及  参数处理  -->
+                <a th:href="@{${'/blog/blogselect'}(pageNo=${pageInfo.currentPage +1})}" aria-label="Previous"><span aria-hidden="true">»</span></a>
+            </li>
+            <!--上一页  标签处理 end -->
+        </ul>
+    </nav>
+    <script>
+
+    </script>
+<!--<script>-->
+    <!--/*删除*/-->
+    <!--function del(obj,id){-->
+        <!--layer.confirm('确认要删除吗？',function(index){-->
+            <!--$.ajax({-->
+                <!--type: 'post',-->
+                <!--url: 'http://localhost:8080/springboot1/blog/delete',-->
+                <!--data: 'bId='+id,-->
+                <!--dataType: "json",-->
+                <!--success:function(result){-->
+                    <!--if ("ok"==result.msg){-->
+                        <!--layer.msg('已删除!',{icon:1,time:1000});-->
+                    <!--}else {-->
+                        <!--alert("删除失败！")-->
+                    <!--}-->
+                <!--},-->
+                <!--error:function () {-->
+
+                <!--}-->
+            <!--});-->
+        <!--});-->
+    <!--}-->
+<!--</script>-->
+</body>
+</html>
