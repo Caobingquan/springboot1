@@ -6,6 +6,7 @@ import com.example.springboot1.pojo.Blog;
 import com.example.springboot1.pojo.PageInfo;
 import com.example.springboot1.service.BlogService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -68,7 +69,7 @@ public class BlogServiceImpl implements BlogService {
         pageInfo.setMaxPage(maxPage);
         return pageInfo;
     }
-
+    @Cacheable(value = "blogs",key = "'a'+#pageNo+#pageSize")
     @Override
     public PageInfo<Blog> findBlogsByLimit(int pageNo, int pageSize) {
         PageInfo<Blog> pageInfo = new PageInfo<>();

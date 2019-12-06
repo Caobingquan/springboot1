@@ -6,6 +6,7 @@ import com.example.springboot1.pojo.User;
 import com.example.springboot1.service.UserService;
 import com.example.springboot1.utils.RedisUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -40,6 +41,7 @@ public class UserServiceImpl implements UserService {
         return userMapper.selectCheckUphone(uPhone);
     }
 
+	@Cacheable(value="a",key = "#user.uPhone")
     @Override
 	public String login(User user) {
 		User getUser = userMapper.selectCheckUphone(user.getuPhone());
@@ -52,6 +54,7 @@ public class UserServiceImpl implements UserService {
 					userMapper.updateCount(getUser);
 					redisUtils.set("aa",getUser,60*10);
 					System.out.println(redisUtils.get("aa"));
+					System.out.println("aaaaaa");
 					return "ok";
 				}else {
 					getUser.setuErrorCount(getUser.getuErrorCount()+1);

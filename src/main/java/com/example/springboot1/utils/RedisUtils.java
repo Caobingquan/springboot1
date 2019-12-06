@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class RedisUtils {
     @Autowired
-    private RedisTemplate<String, Object> redisTemplate;
+    private RedisTemplate<String,Object> redisTemplate;
         // =============================common============================
         /**
          * 指定缓存失效时间
@@ -406,7 +406,6 @@ public class RedisUtils {
          * 将list放入缓存
          * @param key 键
          * @param value 值
-         * @param time 时间(秒)
          * @return
          */
     public boolean lSet(String key, Object value) {
@@ -441,7 +440,6 @@ public class RedisUtils {
          * 将list放入缓存
          * @param key 键
          * @param value 值
-         * @param time 时间(秒)
          * @return
          */
     public boolean lSet(String key, List<Object> value) {
